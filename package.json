@@ -1,0 +1,20 @@
+{
+  "name": "prontosocorro",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@handlebars/allow-prototype-access": "^1.0.5",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.0",
+    "express-handlebars": "^8.0.1",
+    "mysql2": "^3.11.3",
+    "sequelize": "^6.37.3"
+  }
+}
