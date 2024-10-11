@@ -1,5 +1,5 @@
 <div id="" class="container-fluid d-flex justify-content-center my-5">
-    <div class="card w-75 border p-4 position-relative" >
+    <div id="cad" class="card col-10 col-sm-8 col-md-8 col-lg-5 border p-4 position-relative" data-bs-theme="dark" >
         <!-- Botão fechar alinhado à direita -->
         <a href="/">
             <button type="button" class="btn-close position-absolute" style="top: 10px; right: 10px;" aria-label="Close"></button>
@@ -17,18 +17,25 @@
         <div class="card w-100 mb-3">
             <div class="card-body">
                 <h5 class="card-title">{{avisos}}</h5>
-                <p class="card-text">{{createdAtFormatted}}</p>
-                <a href="/delete/{{id}}" class="btn btn-danger btn-sm">Excluir aviso</a>
+                <p class="card-text"> criado em: {{createdAtFormatted}}, Usuário: {{nickUser}}</p>
+                {{#if (eq nickUser ../Vnick)}}
+                    <a href="/delete/{{id}}" class="btn btn-danger btn-sm">Excluir aviso</a>
+                {{/if}}
             </div>
         </div>
         {{/each}}
 
         <!-- Formulário para criar um novo alerta -->
+        
         <p><strong>Criar alerta?</strong></p>
         <form action="/addInf" method="post">
+            {{#if status}}
             <input type="text" name="aviso" class="form-control mb-3" placeholder="Digite um novo alerta" required>
             <button class="btn btn-primary btn-sm">Enviar</button>
-
+            {{else}}
+            <label>você precisa estar logado para criar avisos</label>
+            <p><a href="/login">faça login</a>, ou caso ainda não tenha uma conta, <a href="/cadastro">cadastre-se aqui</a> </p>
+            {{/if}}    
             <!-- Inputs hidden -->
             <input type="hidden" name="name" value="{{name}}">
             <input type="hidden" name="idHosp" value="{{idHosp}}">

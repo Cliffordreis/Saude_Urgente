@@ -1,0 +1,24 @@
+{{#if error}}
+<div class="alert alert-danger col-10 col-sm-8 col-md-8 col-lg-5 d-flex align-items-center mx-auto mt-3" role="alert" style="position: relative;">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <div>
+        {{error}}
+    </div>
+</div>
+{{/if}}
+
+<div class="container-fluid d-flex justify-content-center my-5">
+    <div id="cad" class="card col-10 col-sm-8 col-md-6 col-lg-4 border p-3 text-center" data-bs-theme="dark">
+        <form action="/entrando" method="post">
+            <div class="mb-5">
+                <h1>Login</h1>
+            </div>
+
+            <input class="form-control mb-2" type="email" name="email" placeholder="digite seu email" required>
+            <input class="form-control mb-2" type="password" name="senha" placeholder="digite sua senha" required>
+            <a href=""><p>não tem conta? cadastre-se aqui</p></a>
+            <a><button class="btn btn-primary">entrar</button></a>
+        </form>
+
+    </div>
+</div>

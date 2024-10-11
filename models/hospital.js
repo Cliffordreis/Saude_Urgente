@@ -7,6 +7,9 @@ const Hospital = db.sequelize.define('Hospital', {
     },
     avisos: {
         type: db.Sequelize.TEXT
+    },
+    nickUser : {
+        type: db.Sequelize.STRING(60)
     }
 })
 

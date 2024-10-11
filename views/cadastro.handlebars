@@ -1,0 +1,42 @@
+{{#if error}}
+<div class="alert alert-danger col-10 col-sm-8 col-md-8 col-lg-5 d-flex align-items-center mx-auto mt-3" role="alert" style="position: relative;">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <div>
+        {{error}}
+    </div>
+</div>
+{{/if}}
+<div class="container-fluid d-flex justify-content-center my-4" data-bs-theme="dark">
+    <div id="cad" class="card col-10 col-sm-8 col-md-8 col-lg-5 border p-3">
+        <form action="/adduser" method="post">
+            <div class="mb-5 text-center">
+                <h1>Cadastre-se</h1>
+            </div>
+            <div class="text-left row">
+                <label>Nome:</label>
+                <div class="col">
+                    <input type="text" name="nome" class="form-control" placeholder="primeiro nome" maxlength="20" minlength="2" required>
+                </div>
+                <div class="col">
+                    <input type="text" name="sobrenome" class="form-control" placeholder="segundo nome" maxlength="20" minlength="2" required>
+                </div>
+            </div>
+            <div class="text-left m-3">
+                <label>email:</label>
+                <input name="email" type="email" placeholder="digite seu email" class="form-control" maxlength="50" required>
+            </div>
+            <div class="text-left m-3">
+                <label>Senha:</label>   
+                <input name="senha" id="pass" type="password" placeholder="digite sua senha" class="form-control" maxlength="20" minlength="8" required>
+            </div>
+            <div class="text-left m-3">
+                <label>Confirme sua senha:</label>
+                <input name="confirmacao" id="confpass" type="password" placeholder="confirme sua senha" class="form-control" maxlength="20" minlength="8" required>
+            </div>
+            <div class="text-center mt-3">
+                <button class="btn btn-primary text-center">Criar conta</button>
+            </div>
+        </form>
+
+    </div>
+</div>
