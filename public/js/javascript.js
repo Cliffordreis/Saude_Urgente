@@ -1,4 +1,3 @@
-// Initialize and add the map
 let map;
 let service;
 let infowindow;
@@ -63,7 +62,8 @@ function createMarker(place) {
     position: place.geometry.location,
     title: place.name,
     icon: {
-      scaledSize: new google.maps.Size(32, 32), // Tamanho do ícone
+      url : "/images/icomp.png",
+      scaledSize: new google.maps.Size(32, 39), // Tamanho do ícone
     },
   });
 
