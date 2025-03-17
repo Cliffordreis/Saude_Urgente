@@ -2,8 +2,33 @@
     <div id="cad" class="card col-10 col-sm-8 col-md-8 col-lg-5 border p-4 position-relative" data-bs-theme="dark" >
         <!-- Botão fechar alinhado à direita -->
         <a href="/">
-            <button type="button" class="btn-close position-absolute" style="top: 10px; right: 10px;" aria-label="Close"></button>
+            <button type="button" class="btn-close position-absolute" style="top: 10px; right: 17px;" aria-label="Close"></button>
         </a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#alertModal" title="Alertar erro sobre localidade">
+            <img src="images/alert.jpg" class="position-absolute" width="40px" height="40px" style="top: 40px; right: 10px;">
+        </a>
+
+        <!-- Modal do Bootstrap -->
+        <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="alertModalLabel">Reportar Erro</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="reportForm">
+                            <div class="mb-3">
+                                <label for="errorMessage" class="form-label">Descreva o erro:</label>
+                                <textarea class="form-control" id="errorMessage" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-danger">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Título centralizado -->
         <div class="container-fluid">

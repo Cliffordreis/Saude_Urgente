@@ -176,6 +176,28 @@ fetch('/api/key')
             }
         };
 
+
+      //botão localização
+        window.getUserLocation = function() {
+          if ("geolocation" in navigator) {
+              navigator.geolocation.getCurrentPosition(
+                  async (position) => {
+                      const lat = position.coords.latitude;
+                      const lon = position.coords.longitude;
+      
+                      // Atualiza o mapa para a localização do usuário
+                      map.flyTo({ center: [lon, lat], zoom: 15 });
+      
+                  },
+                  (error) => {
+                      alert("Erro ao obter localização: " + error.message);
+                  }
+              );
+          } else {
+              alert("Geolocalização não é suportada pelo seu navegador.");
+          }
+      }
+
         // Chama a função ao carregar o mapa e quando ele for movido
         map.on("load", searchHospitals);
         map.on("moveend", searchHospitals);

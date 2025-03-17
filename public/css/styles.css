@@ -22,7 +22,8 @@ input, button {
     border-radius: 10px;
     height: auto; /* Ajuste para altura automática */
     width: auto;
-    min-width: 450px;
+    min-width: 600px;
+    max-width: 600px;
     display: flex;
     flex-direction: column; /* Deixa os itens em coluna */
 }
