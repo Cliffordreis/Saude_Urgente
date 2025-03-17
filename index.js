@@ -2,15 +2,16 @@ const express = require('express');
 const Handlebars = require('handlebars');
 const expressHandlebars = require('express-handlebars');
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
-const PORT = process.env.PORT || 3000;
+require('dotenv').config();
 const bodyParser = require('body-parser');
 const Hospital = require('./models/hospital');
-const apikey = require('./key');
 const Users = require('./models/users');
+const PORT = process.env.PORT || 3000;
 //template engine
 const app = express();
 app.locals.Vnick;
 app.locals.status = false;
+
 
 app.engine('handlebars', expressHandlebars.engine({
     handlebars: allowInsecurePrototypeAccess(Handlebars),
@@ -29,9 +30,13 @@ app.use(bodyParser.json());
 // Configurar arquivos estáticos
 app.use(express.static('public'));
 
+app.get('/api/key', (req, res) => {
+    res.json({ key: process.env.MAPBOX_ACCESS_TOKEN });
+});
+
 // home
 app.get('/', (req, res) => {
-    res.render('home', {apikey});
+    res.render('home', {accessToken: process.env.MAPBOX_ACCESS_TOKEN});
 });
 
 //login e cadastrament
@@ -103,12 +108,11 @@ app.get('/logout', (req, res) => {
 app.get('/detalhes', (req, res) => {
     const { name, idHosp, vicinity } = req.query;
 
-    // Busca as informações no banco de dados onde o serial é igual ao idHosp
+    // Busca as informações no banco de dados onde o serial é igual ao idHosp (osm_id)
     Hospital.findAll({
-        where: { serial: idHosp },
-        order : [['createdAT', 'DESC']]
+        where: { serial: idHosp }, // Usa o osm_id como identificador
+        order : [['createdAt', 'DESC']]
     }).then(function (hospitals) {
-        // Formata as datas antes de renderizar a página
         hospitals = hospitals.map(hospital => {
             const formattedDate = hospital.createdAt.toLocaleString('pt-BR', {
                 timeZone: 'America/Sao_Paulo',
@@ -120,19 +124,19 @@ app.get('/detalhes', (req, res) => {
                 second: '2-digit'
             });
 
-            // Adiciona a data formatada diretamente ao objeto hospital
             return {
-                ...hospital.dataValues, // Pega todos os valores do hospital
-                createdAtFormatted: formattedDate // Adiciona a data formatada
+                ...hospital.dataValues,
+                createdAtFormatted: formattedDate
             };
         });
 
-        // Renderiza a página com todos os dados de uma vez
-        res.render('detalhes', { name, idHosp, vicinity, hospitals: hospitals });
+        // Renderiza a página com os dados
+        res.render('detalhes', { name, idHosp, vicinity, hospitals });
     }).catch(function (error) {
         res.status(500).send("Erro ao buscar avisos: " + error);
     });
 });
+
 
 //rota para destruir avisos:
 app.get('/delete/:id', (req, res) => {

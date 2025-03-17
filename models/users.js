@@ -21,4 +21,4 @@ const Users = db.sequelize.define('Users', {
 
 module.exports = Users;
 
-// Users.sync({force : true})
+//Users.sync({force : true})

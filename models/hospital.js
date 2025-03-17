@@ -15,4 +15,4 @@ const Hospital = db.sequelize.define('Hospital', {
 
 module.exports = Hospital;
 
-// Hospital.sync({force : true})
+//Hospital.sync({force : true})

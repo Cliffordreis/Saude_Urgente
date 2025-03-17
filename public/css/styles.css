@@ -1,21 +1,114 @@
-  #map {
-    height: 100%;
-  }
-  html, body {
+body { margin: 0; padding: 10; }
+#map { width: 100vw; height: 100vh; }
+.controls {
+    position: absolute;
+    top: 150px; /* Posição inicial */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+}
+input, button {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+}
+
+#box {
+    background-color: rgba(0, 0, 0, 0.483);
+    padding: 10px;
+    border-radius: 10px;
+    height: auto; /* Ajuste para altura automática */
+    width: auto;
+    min-width: 450px;
+    display: flex;
+    flex-direction: column; /* Deixa os itens em coluna */
+}
+
+#searchBox {
+    flex-grow: 1; /* Faz a barra de busca ocupar o espaço restante */
+    border-radius: 5px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #000;
+}
+
+#searchBox::placeholder {
+    color: #666;
+}
+
+button {
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #000;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.search-results {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    margin-top: 10px;
+    display: none; /* Inicialmente oculto */
+}
+
+.search-result {
+    padding: 10px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.search-result:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-  }
+}
 
-  #namNav{
+#namNav {
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     font-size: 30px;
-  }
+}
 
-  #cad{
-
+#cad {
     box-shadow: 8px 10px 10px rgba(0, 0, 0, 0.625);
+}
 
-  }
+.custom-marker {
+    background-image: url('/images/icomp.png');
+    width: 40px; /* Largura do ícone */
+    height: 40px; /* Altura do ícone */
+    background-size: contain; /* Ajusta a imagem ao tamanho */
+    background-repeat: no-repeat;
+    background-position: center bottom; /* Garante que a base fique visível */
+}
 
-  
+/* Media Queries para telas pequenas */
+@media (max-width: 768px) {
+    .controls {
+        top: 200px; /* Aumenta o top para evitar sobreposição com a navbar */
+    }
+
+    #box {
+        min-width: 90%; /* Aumenta a largura para ocupar mais espaço */
+    }
+}
+
+@media (max-width: 480px) {
+    .controls {
+        top: 250px; /* Aumenta ainda mais o top para telas muito pequenas */
+    }
+
+    #box {
+        min-width: 95%; /* Aumenta a largura para ocupar mais espaço */
+    }
+}
