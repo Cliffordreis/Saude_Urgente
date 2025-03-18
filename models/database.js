@@ -1,15 +1,17 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize(process.env.MYSQL_URL, {
-    dialect: 'mysql', 
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'mysql',
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    }
 });
 
-sequelize.authenticate().then(function(){
-    console.log("conectado com sucesso")
-}).catch(function(error){ 
-console.log("falha ao se conectar "+error)})
-    
-module.exports = {
-    Sequelize : Sequelize,
-    sequelize : sequelize
-}
+sequelize.authenticate()
+    .then(() => console.log("Conectado com sucesso ao banco!"))
+    .catch(error => console.log("Falha ao conectar: " + error));
+
+module.exports = { Sequelize, sequelize };
