@@ -1,18 +1,21 @@
 const { Sequelize } = require('sequelize');
 
-// Use a variável de ambiente correta, que é MYSQL_URL
+// Ou usando a URL diretamente:
 const sequelize = new Sequelize(process.env.MYSQL_URL, {
-    dialect: 'mysql',
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        }
+  dialect: 'mysql',
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
     }
+  }
 });
 
 sequelize.authenticate()
-    .then(() => console.log("✅ Conectado com sucesso ao banco!"))
-    .catch(error => console.log("❌ Falha ao conectar: " + error));
+  .then(() => console.log("Conectado ao MySQL no Railway com sucesso!"))
+  .catch(error => console.log("Falha na conexão: " + error));
 
-module.exports = { Sequelize, sequelize };
+module.exports = {
+  Sequelize: Sequelize,
+  sequelize: sequelize
+};
