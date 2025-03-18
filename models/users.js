@@ -1,24 +1,30 @@
-const { FORCE } = require('sequelize/lib/index-hints');
 const db = require('./database');
 
 const Users = db.sequelize.define('Users', {
-    nome : {
+    nome: {
         type: db.Sequelize.STRING(20)
     },
-    sobrenome : {
+    sobrenome: {
         type: db.Sequelize.STRING(20)
     },
-    nick : {
+    nick: {
         type: db.Sequelize.STRING(60)
     },
     email: {
-        type: db.Sequelize.STRING(50),
+        type: db.Sequelize.STRING(50)
     },
     senha: {
         type: db.Sequelize.STRING(20)
     }
-})
+});
+
+// Sincroniza a tabela 'Users' sem apagar dados existentes
+db.sequelize.sync({ alter: true })
+    .then(() => {
+        console.log("Tabela 'Users' sincronizada com sucesso.");
+    })
+    .catch((error) => {
+        console.error("Erro ao sincronizar tabela 'Users':", error);
+    });
 
 module.exports = Users;
-
-//Users.sync({force : true})

@@ -1,18 +1,24 @@
-const { FORCE } = require('sequelize/lib/index-hints');
 const db = require('./database');
 
 const Hospital = db.sequelize.define('Hospital', {
-    serial : {
+    serial: {
         type: db.Sequelize.STRING(27)
     },
     avisos: {
         type: db.Sequelize.TEXT
     },
-    nickUser : {
+    nickUser: {
         type: db.Sequelize.STRING(60)
     }
-})
+});
+
+// Sincroniza a tabela sem apagar os dados existentes
+db.sequelize.sync({ alter: true })
+    .then(() => {
+        console.log("Tabela 'Hospital' sincronizada com sucesso.");
+    })
+    .catch((error) => {
+        console.error("Erro ao sincronizar tabela 'Hospital':", error);
+    });
 
 module.exports = Hospital;
-
-//Hospital.sync({force : true})
