@@ -6,6 +6,8 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 const Hospital = require('./models/hospital');
 const Users = require('./models/users');
+const session = require("express-session");
+const flash = require("connect-flash");
 const PORT = process.env.PORT || 3000;
 //template engine
 const app = express();
@@ -29,6 +31,14 @@ app.use(bodyParser.json());
 
 // Configurar arquivos estáticos
 app.use(express.static('public'));
+
+//configure session
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true
+}))
+app.use(flash())
 
 app.get('/api/key', (req, res) => {
     res.json({ key: process.env.MAPBOX_ACCESS_TOKEN });
