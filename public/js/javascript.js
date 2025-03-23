@@ -16,6 +16,9 @@ fetch('/api/key')
             zoom: 13
         });
 
+        // Cache em memória para buscas
+        const searchCache = new Map();
+
         // Função para buscar hospitais dentro da área visível do mapa
         async function searchHospitals() {
             const bbox = map.getBounds();
@@ -24,7 +27,7 @@ fetch('/api/key')
             try {
                 const response = await fetch(url, {
                     headers: {
-                        'User-Agent': 'Saude_Urgente/1.0 (cliffordreis69@gmail.com)' // User-Agent
+                        'User-Agent': 'Saude_Urgente/1.0 (cliffordreis69@gmail.com)'
                     }
                 });
                 const data = await response.json();
@@ -50,7 +53,7 @@ fetch('/api/key')
             }
         }
 
-        // Função para buscar sugestões dinâmicas enquanto o usuário digita
+        // Função para buscar sugestões dinâmicas
         let debounceTimer;
         window.autocompleteSearch = function () {
             clearTimeout(debounceTimer);
@@ -64,43 +67,39 @@ fetch('/api/key')
                     return;
                 }
 
-                // Verifica se o resultado já está no cache
-                const cachedResults = localStorage.getItem(query);
-                if (cachedResults) {
-                    const data = JSON.parse(cachedResults);
-                    showResults(data);
+                // Verifica cache em memória
+                const cachedData = searchCache.get(query);
+                if (cachedData) {
+                    showResults(cachedData);
                     return;
                 }
 
-                // Adicionando "hospital" na busca para priorizar estabelecimentos de saúde
                 const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ' hospital')}&limit=5&addressdetails=1`;
 
                 try {
                     const response = await fetch(url, {
                         headers: {
-                            'User-Agent': 'Saude_Urgente/1.0 (cliffordreis69@gmail.com)' // User-Agent
+                            'User-Agent': 'Saude_Urgente/1.0 (cliffordreis69@gmail.com)'
                         }
                     });
                     const data = await response.json();
 
-                    // Salva os resultados no cache
-                    localStorage.setItem(query, JSON.stringify(data));
-
+                    // Atualiza cache
+                    searchCache.set(query, data);
                     showResults(data);
                 } catch (error) {
                     console.error("Erro ao buscar sugestões:", error);
                 }
-            }, 500); // Debounce de 500ms
+            }, 500);
         };
 
-        // Função para exibir os resultados na tela
+        // Função para exibir resultados
         function showResults(data) {
             const resultsBox = document.getElementById("searchResults");
             resultsBox.innerHTML = "";
             resultsBox.style.display = data.length > 0 ? "block" : "none";
 
             data.forEach(place => {
-                // Filtra por locais que sejam hospitais ou tenham nomes relevantes
                 if (place.type === "hospital" || place.display_name.toLowerCase().includes("hospital")) {
                     const resultItem = document.createElement("div");
                     resultItem.className = "search-result";
@@ -117,7 +116,6 @@ fetch('/api/key')
                 }
             });
 
-            // Se ainda não houver resultados, exibe os primeiros disponíveis
             if (resultsBox.innerHTML === "") {
                 data.forEach(place => {
                     const resultItem = document.createElement("div");
@@ -136,20 +134,17 @@ fetch('/api/key')
             }
         }
 
-        // Função para buscar a localização digitada e mover o mapa para ela
+        // Função de busca principal
         window.searchLocation = async function () {
             const query = document.getElementById("searchBox").value;
             if (!query) return alert("Digite um local para buscar!");
 
-            // Verifica se o resultado já está no cache
-            const cachedResults = localStorage.getItem(query);
-            if (cachedResults) {
-                const data = JSON.parse(cachedResults);
-                if (data.length > 0) {
-                    const { lat, lon } = data[0];
-                    map.flyTo({ center: [lon, lat], zoom: 17 });
-                    return;
-                }
+            // Verifica cache em memória
+            const cachedData = searchCache.get(query);
+            if (cachedData && cachedData.length > 0) {
+                const { lat, lon } = cachedData[0];
+                map.flyTo({ center: [lon, lat], zoom: 17 });
+                return;
             }
 
             const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
@@ -157,13 +152,13 @@ fetch('/api/key')
             try {
                 const response = await fetch(url, {
                     headers: {
-                        'User-Agent': 'Saude_Urgente/1.0 (cliffordreis69@gmail.com)' // User-Agent
+                        'User-Agent': 'Saude_Urgente/1.0 (cliffordreis69@gmail.com)'
                     }
                 });
                 const data = await response.json();
 
-                // Salva os resultados no cache
-                localStorage.setItem(query, JSON.stringify(data));
+                // Atualiza cache
+                searchCache.set(query, data);
 
                 if (data.length > 0) {
                     const { lat, lon } = data[0];
@@ -176,29 +171,24 @@ fetch('/api/key')
             }
         };
 
-
-      //botão localização
+        // Botão de geolocalização (mantido igual)
         window.getUserLocation = function() {
-          if ("geolocation" in navigator) {
-              navigator.geolocation.getCurrentPosition(
-                  async (position) => {
-                      const lat = position.coords.latitude;
-                      const lon = position.coords.longitude;
-      
-                      // Atualiza o mapa para a localização do usuário
-                      map.flyTo({ center: [lon, lat], zoom: 15 });
-      
-                  },
-                  (error) => {
-                      alert("Erro ao obter localização: " + error.message);
-                  }
-              );
-          } else {
-              alert("Geolocalização não é suportada pelo seu navegador.");
-          }
-      }
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        map.flyTo({ center: [lon, lat], zoom: 15 });
+                    },
+                    (error) => {
+                        alert("Erro ao obter localização: " + error.message);
+                    }
+                );
+            } else {
+                alert("Geolocalização não é suportada pelo seu navegador.");
+            }
+        }
 
-        // Chama a função ao carregar o mapa e quando ele for movido
         map.on("load", searchHospitals);
         map.on("moveend", searchHospitals);
     })
