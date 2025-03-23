@@ -14,7 +14,7 @@ const Users = db.sequelize.define('Users', {
         type: db.Sequelize.STRING(50)
     },
     senha: {
-        type: db.Sequelize.STRING(20)
+        type: db.Sequelize.STRING(100)
     }
 });
 

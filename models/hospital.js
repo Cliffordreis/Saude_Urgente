@@ -9,7 +9,11 @@ const Hospital = db.sequelize.define('Hospital', {
     },
     nickUser: {
         type: db.Sequelize.STRING(60)
+    },
+    iduser: {
+        type: db.Sequelize.INTEGER(10)
     }
+
 });
 
 // Sincroniza a tabela sem apagar os dados existentes

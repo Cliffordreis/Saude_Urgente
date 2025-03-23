@@ -43,7 +43,7 @@
             <div class="card-body">
                 <h5 class="card-title">{{avisos}}</h5>
                 <p class="card-text"> criado em: {{createdAtFormatted}}, Usuário: {{nickUser}}</p>
-                {{#if (eq nickUser ../Vnick)}}
+                {{#if (eq ../user.id iduser)}}
                     <a href="/delete/{{id}}" class="btn btn-danger btn-sm">Excluir aviso</a>
                 {{/if}}
             </div>
@@ -54,7 +54,7 @@
         
         <p><strong>Criar alerta?</strong></p>
         <form action="/addInf" method="post">
-            {{#if status}}
+            {{#if isAuthenticated}}
             <input type="text" name="aviso" class="form-control mb-3" placeholder="Digite um novo alerta" required>
             <button class="btn btn-primary btn-sm">Enviar</button>
             {{else}}

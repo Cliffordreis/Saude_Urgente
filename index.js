@@ -8,6 +8,10 @@ const Hospital = require('./models/hospital');
 const Users = require('./models/users');
 const session = require("express-session");
 const flash = require("connect-flash");
+const bcrypt = require("bcryptjs");
+const passport = require('passport');
+const { hash } = require('bcryptjs');
+require("./config/auth")(passport)
 const PORT = process.env.PORT || 3000;
 //template engine
 const app = express();
@@ -38,7 +42,20 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use(flash())
+//middleware
+app.use((req, res, next) =>{
+    res.locals.success_msg = req.flash("success_msg")
+    res.locals.error_msg = req.flash("error_msg")
+    res.locals.error = req.flash("error")
+    res.locals.user = req.user || null;
+    res.locals.isAuthenticated = req.isAuthenticated();
+    next()
+})
 
 app.get('/api/key', (req, res) => {
     res.json({ key: process.env.MAPBOX_ACCESS_TOKEN });
@@ -60,59 +77,101 @@ app.get('/cadastro', (req, res)=> {
 })
 
 //cadastramento users
-app.post('/adduser', function(req, res) {
-    const {email, senha, confirmacao} = req.body
-    if (senha !== confirmacao){
-        return res.render('cadastro', {error: "as senhas não coincidem!"})
+app.post('/adduser', async (req, res) => {
+    try {
+        const { nome, sobrenome, email, senha, confirmacao } = req.body;
+
+        // 1. Validação básica
+        if (!nome || !sobrenome || !email || !senha) {
+            return res.render('cadastro', { 
+                error: "Todos os campos são obrigatórios!" 
+            });
+        }
+
+        if (senha !== confirmacao) {
+            return res.render('cadastro', { 
+                error: "As senhas não coincidem!" 
+            });
+        }
+
+        // 2. Verificar se usuário existe
+        const usuarioExistente = await Users.findOne({ 
+            where: { email: email } 
+        });
+        
+        if (usuarioExistente) {
+            return res.render('cadastro', { 
+                error: "Este e-mail já está cadastrado!" 
+            });
+        }
+
+        // 3. Hash da senha
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(senha, saltRounds);
+
+        // 4. Criar usuário
+        await Users.create({
+            nome: nome.trim(),
+            sobrenome: sobrenome.trim(),
+            nick: `${nome.trim()} ${sobrenome.trim()}`,
+            email: email.toLowerCase().trim(),
+            senha: hash
+        });
+
+        // 5. Redirecionar com mensagem
+        req.flash('success_msg', 'Cadastro realizado com sucesso!');
+        res.redirect('/login');
+
+    } catch (error) {
+        console.error('Erro no cadastro:', error);
+        req.flash('error_msg', 'Erro interno no servidor');
+        res.redirect('/cadastro');
     }
-    Users.findOne({
-        where: {email : email}
-    }).then(function(resultado){
-        if(resultado){
-        res.render('cadastro', {error: "esse email já possue registro no sistema!"})
-        }else {
-            Users.create({
-                nome : req.body.nome,
-                sobrenome : req.body.sobrenome,
-                nick : req.body.nome + " " + req.body.sobrenome,
-                email : req.body.email,
-                senha: req.body.senha
-            }).then(function (){
-                res.redirect('/login')
-            }).catch(function(error){
-                res.send("houve um erro "+error)
-            })
-            }
-    })
-    
-})
+});
 
 //login
-app.post('/entrando', (req, res) => {
-    const email = req.body.email
-    const senha = req.body.senha
-
-    Users.findOne({
-        where : {email : email,
-                senha : senha}
-    }).then(function (user) {
-        if(user){
-        app.locals.Vnick = user.nick;
-        app.locals.status = true;
-        res.redirect('/')
-        }else{
-            res.render('login', {error: 'usuario e senha não encontrados!'})
-        }
-    }).catch(function(error){
-        res.render("erro "+ error)
-    })
+app.post('/entrando', (req, res, next) => {
+     passport.authenticate("local", {
+        successRedirect: "/",
+        failureRedirect: "/login",
+        failureFlash: true
+     })(req, res, next)
 })
+// app.post('/entrando', (req, res) => {
+//     const email = req.body.email
+//     const senha = req.body.senha
+
+//     Users.findOne({
+//         where : {email : email,
+//                 senha : senha}
+//     }).then(function (user) {
+//         if(user){
+//         app.locals.Vnick = user.nick;
+//         app.locals.status = true;
+//         res.redirect('/')
+//         }else{
+//             res.render('login', {error: 'usuario e senha não encontrados!'})
+//         }
+//     }).catch(function(error){
+//         res.render("erro "+ error)
+//     })
+// })
 //logout
 app.get('/logout', (req, res) => {
-    app.locals.status = false;
-    app.locals.Vnick = null;
-    res.redirect('/')
-})
+    req.logout((err) => {
+        if (err) {
+            console.error('Erro no logout:', err);
+            return res.redirect('/');
+        }
+        req.flash('success_msg', 'Logout realizado com sucesso!');
+        res.redirect('/');
+    });
+});
+// app.get('/logout', (req, res) => {
+//     app.locals.status = false;
+//     app.locals.Vnick = null;
+//     res.redirect('/')
+// })
 
 // Rota para detalhes do hospital
 app.get('/detalhes', (req, res) => {
@@ -166,12 +225,14 @@ app.get('/delete/:id', (req, res) => {
 
 // Enviar avisos
 app.post('/addInf', function (req, res) {
+    const user = req.user; 
     let Dados = {
         serial: req.body.idHosp,
         avisos: req.body.aviso
     };
-    if (app.locals.status) {
-        Dados.nickUser = app.locals.Vnick;
+    if (req.isAuthenticated()) {
+        Dados.nickUser = user.nick;
+        Dados.iduser = user.id; // Armazene o ID do usuário
     }
     Hospital.create(Dados)
         .then(function () {
