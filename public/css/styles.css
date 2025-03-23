@@ -96,7 +96,7 @@ html, body {
 /* Media Queries para telas pequenas */
 @media (max-width: 768px) {
     .controls {
-        top: 200px; /* Aumenta o top para evitar sobreposição com a navbar */
+        top: 150px; /* Aumenta o top para evitar sobreposição com a navbar */
     }
 
     #box {
@@ -106,10 +106,33 @@ html, body {
 
 @media (max-width: 480px) {
     .controls {
-        top: 250px; /* Aumenta ainda mais o top para telas muito pequenas */
+        top: 100px; /* Aumenta ainda mais o top para telas muito pequenas */
     }
 
     #box {
         min-width: 95%; /* Aumenta a largura para ocupar mais espaço */
+    }
+}
+
+.navbar-brand img {
+    height: 60px; /* Altura fixa */
+    width: auto; /* Largura automática para manter proporção */
+    max-width: 180px; /* Largura máxima */
+    transition: all 0.3s ease; /* Suaviza redimensionamento */
+}
+
+/* Ajustes para telas maiores */
+@media (min-width: 992px) {
+    .navbar-brand img {
+        height: 60px;
+        max-width: 180px;
+    }
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 576px) {
+    .navbar-brand img {
+        height: 50px;
+        max-width: 150px;
     }
 }
