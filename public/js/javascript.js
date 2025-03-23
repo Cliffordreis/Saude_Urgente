@@ -181,7 +181,7 @@ fetch('/api/key')
                         map.flyTo({ center: [lon, lat], zoom: 15 });
                     },
                     (error) => {
-                        alert("Erro ao obter localização: " + error.message);
+                        alert("Erro ao obter localização: " + error.message + "ative nas configurações do seu navegador");
                     }
                 );
             } else {

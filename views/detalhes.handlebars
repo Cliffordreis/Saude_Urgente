@@ -1,3 +1,12 @@
+{{#if success_msg}}
+<div class="alert alert-success col-10 col-sm-8 col-md-8 col-lg-5 d-flex align-items-center mx-auto mt-3" role="alert" style="position: relative;">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <div>
+        {{success_msg}}
+    </div>
+</div>
+{{/if}}
+
 <div id="" class="container-fluid d-flex justify-content-center my-5">
     <div id="cad" class="card col-10 col-sm-8 col-md-8 col-lg-5 border p-4 position-relative" data-bs-theme="dark" >
         <!-- Botão fechar alinhado à direita -->
@@ -17,13 +26,20 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="reportForm">
+                        {{#if isAuthenticated}}
+                        <form id="reportForm" action="/addrepo" method="post">
                             <div class="mb-3">
                                 <label for="errorMessage" class="form-label">Descreva o erro:</label>
-                                <textarea class="form-control" id="errorMessage" rows="3" required></textarea>
+                                <textarea class="form-control" name="aviso" id="errorMessage" rows="3" required></textarea>
+                                <input type="hidden" name="idHosp" value="{{idHosp}}">
+                                <input type="hidden" name="name" value="{{name}}">
                             </div>
                             <button type="submit" class="btn btn-danger">Enviar</button>
                         </form>
+                        {{else}}
+                        <h4>você precisa estar logado para reportar um erro deste local!</h4>
+                        <p><a href="/login">faça login</a>, ou caso ainda não tenha uma conta, <a href="/cadastro">cadastre-se aqui</a> </p>
+                        {{/if}}  
                     </div>
                 </div>
             </div>

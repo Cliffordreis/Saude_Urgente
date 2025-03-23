@@ -5,6 +5,7 @@ const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-ac
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const Hospital = require('./models/hospital');
+const Reports =  require('./models/reports');
 const Users = require('./models/users');
 const session = require("express-session");
 const flash = require("connect-flash");
@@ -240,6 +241,29 @@ app.post('/addInf', function (req, res) {
         })
         .catch(function (error) {
             res.send("houve um erro: " + error);
+        });
+});
+
+// Enviar reports
+app.post('/addrepo', function (req, res) {
+    const user = req.user; 
+    let Dados = {
+        serial: req.body.idHosp,
+        report: req.body.aviso,
+        hospital : req.body.name
+    };
+    if (req.isAuthenticated()) {
+        Dados.nickUser = user.nick;
+        Dados.iduser = user.id; // Armazene o ID do usuário
+    }
+    Reports.create(Dados)
+        .then(function () {
+            req.flash('success_msg', 'Relatório enviado com sucesso!');
+            res.redirect('back');
+        })
+        .catch(function (error) {
+            req.flash('error', 'Erro ao enviar relatório: ' + error.message);
+            res.redirect('back');
         });
 });
 
