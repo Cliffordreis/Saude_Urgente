@@ -1,0 +1,39 @@
+<div class="container-fluid d-flex justify-content-center my-4" data-bs-theme="dark">
+    <div id="cad" class="card col-10 col-sm-8 col-md-8 col-lg-5 border p-3">
+        <h2 class="text-center mb-4">Perfil do Usuário</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Nome:</strong> {{user.nome}}</li>
+            <li class="list-group-item"><strong>Sobrenome:</strong> {{user.sobrenome}}</li>
+            <li class="list-group-item"><strong>Apelido:</strong> {{user.nick}}</li>
+            <li class="list-group-item"><strong>Email:</strong> {{user.email}}</li>
+        </ul>
+
+        <!-- Botão para abrir o Modal -->
+        <div class="text-center mt-4">
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                Excluir Conta
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form action="/deletar-conta" method="POST">
+                    <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

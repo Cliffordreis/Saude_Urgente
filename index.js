@@ -13,6 +13,7 @@ const bcrypt = require("bcryptjs");
 const passport = require('passport');
 const { hash } = require('bcryptjs');
 require("./config/auth")(passport)
+const { ensureAuthenticated } = require('./config/auth');
 const PORT = process.env.PORT || 3000;
 //template engine
 const app = express();
@@ -49,6 +50,7 @@ app.use(passport.session())
 
 app.use(flash())
 //middleware
+
 app.use((req, res, next) =>{
     res.locals.success_msg = req.flash("success_msg")
     res.locals.error_msg = req.flash("error_msg")
@@ -67,7 +69,7 @@ app.get('/', (req, res) => {
     res.render('home', {accessToken: process.env.MAPBOX_ACCESS_TOKEN});
 });
 
-//login e cadastrament
+//login e cadastramento
 
 app.get('/login', (req, res) => {
     res.render('login');
@@ -138,25 +140,12 @@ app.post('/entrando', (req, res, next) => {
         failureFlash: true
      })(req, res, next)
 })
-// app.post('/entrando', (req, res) => {
-//     const email = req.body.email
-//     const senha = req.body.senha
 
-//     Users.findOne({
-//         where : {email : email,
-//                 senha : senha}
-//     }).then(function (user) {
-//         if(user){
-//         app.locals.Vnick = user.nick;
-//         app.locals.status = true;
-//         res.redirect('/')
-//         }else{
-//             res.render('login', {error: 'usuario e senha não encontrados!'})
-//         }
-//     }).catch(function(error){
-//         res.render("erro "+ error)
-//     })
-// })
+// Rota para exibir perfil
+app.get('/perfil', ensureAuthenticated, (req, res) => {
+    res.render('perfil', { user: req.user });
+});
+
 //logout
 app.get('/logout', (req, res) => {
     req.logout((err) => {
@@ -168,11 +157,6 @@ app.get('/logout', (req, res) => {
         res.redirect('/');
     });
 });
-// app.get('/logout', (req, res) => {
-//     app.locals.status = false;
-//     app.locals.Vnick = null;
-//     res.redirect('/')
-// })
 
 // Rota para detalhes do hospital
 app.get('/detalhes', (req, res) => {
@@ -221,6 +205,24 @@ app.get('/delete/:id', (req, res) => {
     }).catch((error) => {
         res.status(500).send("Erro ao deletar aviso: " + error);
     });
+});
+
+app.post('/deletar-conta', ensureAuthenticated, async (req, res) => {
+    try {
+        await Users.destroy({ where: { id: req.user.id } });
+        req.logout((err) => {
+            if (err) {
+                console.error('Erro ao sair:', err);
+                return res.redirect('/perfil');
+            }
+            req.flash('success_msg', 'Conta excluída com sucesso.');
+            res.redirect('/');
+        });
+    } catch (error) {
+        console.error('Erro ao excluir conta:', error);
+        req.flash('error_msg', 'Erro ao excluir conta.');
+        res.redirect('/perfil');
+    }
 });
 
 
