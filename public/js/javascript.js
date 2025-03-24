@@ -74,7 +74,7 @@ fetch('/api/key')
                     return;
                 }
 
-                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ' hospital')}&limit=5&addressdetails=1`;
+                const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=BR&q=${encodeURIComponent(query + ' hospital')}&limit=5&addressdetails=1`;
 
                 try {
                     const response = await fetch(url, {
