@@ -98,41 +98,25 @@ fetch('/api/key')
             const resultsBox = document.getElementById("searchResults");
             resultsBox.innerHTML = "";
             resultsBox.style.display = data.length > 0 ? "block" : "none";
-
+        
             data.forEach(place => {
                 if (place.type === "hospital" || place.display_name.toLowerCase().includes("hospital")) {
                     const resultItem = document.createElement("div");
                     resultItem.className = "search-result";
                     resultItem.textContent = place.display_name;
-
+        
                     resultItem.addEventListener("click", () => {
                         document.getElementById("searchBox").value = place.display_name;
                         resultsBox.innerHTML = "";
                         resultsBox.style.display = "none";
                         map.flyTo({ center: [place.lon, place.lat], zoom: 17 });
                     });
-
+        
                     resultsBox.appendChild(resultItem);
                 }
             });
-
-            if (resultsBox.innerHTML === "") {
-                data.forEach(place => {
-                    const resultItem = document.createElement("div");
-                    resultItem.className = "search-result";
-                    resultItem.textContent = place.display_name;
-
-                    resultItem.addEventListener("click", () => {
-                        document.getElementById("searchBox").value = place.display_name;
-                        resultsBox.innerHTML = "";
-                        resultsBox.style.display = "none";
-                        map.flyTo({ center: [place.lon, place.lat], zoom: 17 });
-                    });
-
-                    resultsBox.appendChild(resultItem);
-                });
-            }
         }
+        
 
         // Função de busca principal
         window.searchLocation = async function () {
